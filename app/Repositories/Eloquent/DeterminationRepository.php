@@ -78,7 +78,7 @@ final class DeterminationRepository implements DeterminationRepositoryInterface
         return $this->model
             ->select('id', 'code', 'name', 'biochemical_unit')
             ->selectRaw("CONCAT(code, ' - ', name) as label")
-            ->where('nomenclator_id', $nomenclator_id)
+//            ->where('nomenclator_id', $nomenclator_id)
             ->where(function ($query) use ($filter) {
                 if (! empty($filter)) {
                     $query->orWhere('name', 'like', "%$filter%")
