@@ -21,12 +21,12 @@ class CreateDeterminationsTable extends Migration
             $table->integer('position')->unsigned();
             $table->double('biochemical_unit', 8, 2)->unsigned();
 
-            $table->string('javascript', "5000")->nullable();
-            $table->string('template', "15000")->nullable();
+            $table->text('javascript', )->nullable();
+            $table->text('template', )->nullable();
             $table->json('template_variables')->nullable();
 
-            $table->string('worksheet_template', "15000")->nullable();
-            
+            $table->string('worksheet_template')->nullable();
+
             // Foreign keys
             $table->foreign('nomenclator_id')->references('id')->on('nomenclators')->onDelete('cascade')->onUpdate('cascade');
 

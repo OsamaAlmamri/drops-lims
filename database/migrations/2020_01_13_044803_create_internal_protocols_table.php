@@ -16,11 +16,11 @@ class CreateInternalProtocolsTable extends Migration
     {
         Schema::create('internal_protocols', function (Blueprint $table) {
             $table->id();
-            $table->date('completion_date')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('completion_date')->nullable();
             $table->string('observations')->nullable();
             $table->string('private_notes')->nullable();
             $table->timestamp('closed')->nullable();
-            
+
             $table->unsignedBigInteger('internal_patient_id');
             $table->unsignedBigInteger('prescriber_id');
             $table->unsignedBigInteger('plan_id');
@@ -29,7 +29,7 @@ class CreateInternalProtocolsTable extends Migration
             $table->unsignedInteger('quantity_orders')->nullable();
             $table->string('diagnostic')->nullable();
             $table->unsignedDouble('total_price')->default(0.0);
-            
+
             // Foreign keys
             $table->foreign('internal_patient_id')->references('id')->on('internal_patients')->onDelete('restrict')->onUpdate('cascade');
             $table->foreign('prescriber_id')->references('id')->on('prescribers')->onDelete('restrict')->onUpdate('cascade');
@@ -41,7 +41,7 @@ class CreateInternalProtocolsTable extends Migration
             $table->engine = 'InnoDB';
         });
 
-        DB::statement('ALTER TABLE internal_protocols INHERIT protocols');
+//        DB::statement('ALTER TABLE internal_protocols INHERIT protocols');
     }
 
     /**

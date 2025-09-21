@@ -16,7 +16,7 @@ class CreateProtocolsTable extends Migration
     {
         Schema::create('protocols', function (Blueprint $table) {
             $table->id();
-            $table->date('completion_date')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('completion_date')->nullable();
             $table->string('observations')->nullable();
             $table->string('private_notes')->nullable();
             $table->timestamp('closed')->nullable();
