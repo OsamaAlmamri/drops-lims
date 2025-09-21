@@ -4,7 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Contracts\Repository\DeterminationRepositoryInterface;
 
-use App\Models\Determination; 
+use App\Models\Determination;
 
 final class DeterminationRepository implements DeterminationRepositoryInterface
 {
@@ -59,13 +59,13 @@ final class DeterminationRepository implements DeterminationRepositoryInterface
         return $this->model->findOrFail($id);
     }
 
-    public function index($filter, $nomenclator_id) 
+    public function index($filter, $nomenclator_id)
     {
 		return $this->model
             ->where('nomenclator_id', '=', $nomenclator_id)
             ->where(function ($query) use ($filter) {
                 if (! empty($filter)) {
-                    $query->orWhere("name", "ilike", "%$filter%")
+                    $query->orWhere("name", "like", "%$filter%")
                         ->orWhere("code", "like", "$filter%");
                 }
             })
@@ -81,7 +81,7 @@ final class DeterminationRepository implements DeterminationRepositoryInterface
             ->where('nomenclator_id', $nomenclator_id)
             ->where(function ($query) use ($filter) {
                 if (! empty($filter)) {
-                    $query->orWhere('name', 'ilike', "%$filter%")
+                    $query->orWhere('name', 'like', "%$filter%")
                         ->orWhere('code', 'like', "$filter%");
                 }
             })

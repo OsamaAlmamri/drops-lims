@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Contracts\Repository\InternalProtocolRepositoryInterface;
 
-use App\Models\InternalProtocol; 
+use App\Models\InternalProtocol;
 
 final class InternalProtocolRepository implements InternalProtocolRepositoryInterface
 {
@@ -45,7 +45,7 @@ final class InternalProtocolRepository implements InternalProtocolRepositoryInte
     public function update(array $data, $id)
     {
         // eloquent will modify only the $fillable fields declared in the model
-        
+
         return $this->model->findOrFail($id)->update($data);
     }
 
@@ -64,7 +64,7 @@ final class InternalProtocolRepository implements InternalProtocolRepositoryInte
         return $this->model->findOrFail($id);
     }
 
-    public function getPractices($protocol_id) 
+    public function getPractices($protocol_id)
     {
         $protocol = $this->model->findOrFail($protocol_id);
 
@@ -80,7 +80,7 @@ final class InternalProtocolRepository implements InternalProtocolRepositoryInte
             ->where(function ($query) use ($filter) {
                 if (! empty($filter)) {
                     $query->orWhere("internal_protocols.id", "like", "$filter%")
-                        ->orWhere("internal_patients.full_name", "ilike", "%$filter%")
+                        ->orWhere("internal_patients.full_name", "like", "%$filter%")
                         ->orWhere("internal_patients.identification_number", "like", "$filter%");
                 }
             })
@@ -92,7 +92,7 @@ final class InternalProtocolRepository implements InternalProtocolRepositoryInte
     /*
     * Returns a list of protocols between two specified dates
     */
-    public function getProtocolsInDatesRange($initial_date, $ended_date) 
+    public function getProtocolsInDatesRange($initial_date, $ended_date)
     {
         return $this->model
             ->whereBetween('completion_date', [$initial_date, $ended_date])
@@ -104,28 +104,28 @@ final class InternalProtocolRepository implements InternalProtocolRepositoryInte
     /*
     * Returns a list of protocols between two specified dates for a particular patient
     */
-    public function getProtocolsForPatient($initial_date, $ended_date, $patient_id) 
+    public function getProtocolsForPatient($initial_date, $ended_date, $patient_id)
     {
         return $this->model
             ->whereBetween('completion_date', [$initial_date, $ended_date])
             ->orderBy('completion_date', 'DESC')
             ->where('internal_patient_id', $patient_id)
             ->get();
-    } 
+    }
 
-    public function getPendingProtocols() 
+    public function getPendingProtocols()
     {
         return $this->model
             ->where('closed', null)
             ->get();
     }
 
-    public function getSumOfAllSocialWorksProtocols() 
+    public function getSumOfAllSocialWorksProtocols()
     {
         $practices = DB::table('internal_practices')
             ->select('internal_protocol_id', DB::raw('SUM(price) as total_amount'))
             ->groupBy('internal_protocol_id');
-      
+
         return $this->model
             ->select(DB::raw('SUM(internal_practices.total_amount) as total_amount'))
             ->joinSub($practices, 'internal_practices', function ($join) {
@@ -145,11 +145,11 @@ final class InternalProtocolRepository implements InternalProtocolRepositoryInte
     {
         $this->model->where('id', $id)->decrement('total_price', $value);
     }
-    
+
     /*
     * Returns true if it was able to close the protocol, false otherwise
     */
-    public function close($id) 
+    public function close($id)
     {
         // closed field is protected by the eloquent model
         $protocol = $this->model->findOrFail($id);

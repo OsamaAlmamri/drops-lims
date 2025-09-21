@@ -21,20 +21,20 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            
-            $table->enum('lang', ['en', 'es'])->default('en');
-            
+
+            $table->enum('lang', ['en', 'ar'])->default('ar');
+
             $table->timestamp('last_login_at')->nullable();
             $table->string('last_login_ip')->nullable();
 
             $table->rememberToken();
-            
+
 
             // For biochemical users
             $table->string('signature')->nullable();
             $table->string('primary_enrollment')->nullable();
             $table->string('secondary_enrollment')->nullable();
-            
+
             $table->softDeletes();
             $table->timestamps();
 

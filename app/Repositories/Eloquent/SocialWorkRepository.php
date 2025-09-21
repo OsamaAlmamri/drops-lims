@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Contracts\Repository\SocialWorkRepositoryInterface;
 
-use App\Models\SocialWork; 
+use App\Models\SocialWork;
 
 final class SocialWorkRepository implements SocialWorkRepositoryInterface
 {
@@ -59,9 +59,9 @@ final class SocialWorkRepository implements SocialWorkRepositoryInterface
             ->join('plans', 'social_works.id', '=', 'plans.social_work_id')
             ->where(function ($query) use ($filter) {
                 if (! empty($filter)) {
-                    $query->orWhere('social_works.name', 'ilike', "%$filter%")
-                        ->orWhere('social_works.acronym', 'ilike', "$filter%")
-                        ->orWhere('plans.name', 'ilike', "%$filter%");
+                    $query->orWhere('social_works.name', 'like', "%$filter%")
+                        ->orWhere('social_works.acronym', 'like', "$filter%")
+                        ->orWhere('plans.name', 'like', "%$filter%");
                 }
             })
             ->orderBy('social_works.name', 'ASC')

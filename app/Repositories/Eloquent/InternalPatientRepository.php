@@ -31,7 +31,7 @@ final class InternalPatientRepository implements InternalPatientRepositoryInterf
     }
 
     public function update(array $data, $id)
-    {   
+    {
         // use find to trigger model events
 
         return $this->model->findOrFail($id)->update($data);
@@ -57,7 +57,7 @@ final class InternalPatientRepository implements InternalPatientRepositoryInterf
         return $this->model
             ->where(function ($query) use ($filter) {
                 if (! empty($filter)) {
-                    $query->orWhere("full_name", "ilike", "%$filter%")
+                    $query->orWhere("full_name", "like", "%$filter%")
                         ->orWhere("identification_number", "like", "$filter%");
                 }
             })
@@ -65,13 +65,13 @@ final class InternalPatientRepository implements InternalPatientRepositoryInterf
             ->get();
     }
 
-    public function loadPatients($filter) 
+    public function loadPatients($filter)
     {
         return $this->model
-            ->select('id', 'full_name', 'identification_number') 
+            ->select('id', 'full_name', 'identification_number')
             ->where(function ($query) use ($filter) {
                 if (! empty($filter)) {
-                    $query->orWhere('full_name', 'ilike', "%$filter%")
+                    $query->orWhere('full_name', 'like', "%$filter%")
                         ->orWhere('identification_number', 'like', "$filter%");
                 }
             })
@@ -79,10 +79,10 @@ final class InternalPatientRepository implements InternalPatientRepositoryInterf
             ->get();
     }
 
-    public function getSexComposition() 
+    public function getSexComposition()
     {
         return $this->model
-        ->select('sex') 
+        ->select('sex')
         ->selectRaw('COUNT(*) as total_patients')
         ->groupBy('sex')
         ->get();

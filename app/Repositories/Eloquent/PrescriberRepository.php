@@ -4,7 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Contracts\Repository\PrescriberRepositoryInterface;
 
-use App\Models\Prescriber; 
+use App\Models\Prescriber;
 
 final class PrescriberRepository implements PrescriberRepositoryInterface
 {
@@ -57,7 +57,7 @@ final class PrescriberRepository implements PrescriberRepositoryInterface
         return $this->model
             ->where(function ($query) use ($filter) {
                 if (! empty($filter)) {
-                    $query->orWhere("full_name", "ilike", "%$filter%")
+                    $query->orWhere("full_name", "like", "%$filter%")
                         ->orWhere("primary_enrollment", "like", "$filter%")
                         ->orWhere("secondary_enrollment", "like", "$filter%");
                 }
@@ -72,7 +72,7 @@ final class PrescriberRepository implements PrescriberRepositoryInterface
         return $this->model->select('id', 'full_name', 'primary_enrollment', 'secondary_enrollment')
             ->where(function ($query) use ($filter) {
                 if (! empty($filter)) {
-                    $query->orWhere('full_name', 'ilike', "%$filter%")
+                    $query->orWhere('full_name', 'like', "%$filter%")
                     ->orWhere('primary_enrollment', 'like', "$filter%")
                     ->orWhere('secondary_enrollment', 'like', "$filter%");
                 }

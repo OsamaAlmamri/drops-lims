@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Contracts\Repository\BillingPeriodRepositoryInterface;
 
-use App\Models\BillingPeriod; 
+use App\Models\BillingPeriod;
 
 final class BillingPeriodRepository implements BillingPeriodRepositoryInterface
 {
@@ -59,7 +59,7 @@ final class BillingPeriodRepository implements BillingPeriodRepositoryInterface
      */
     public function getBillingPeriods() {
         $current_date = date('Y-m-d');
-        
+
         $start_date = date("Y-m-d", strtotime($current_date."- 6 month"));
         $end_date = date("Y-m-d", strtotime($current_date."+ 6 month"));
 
@@ -78,7 +78,7 @@ final class BillingPeriodRepository implements BillingPeriodRepositoryInterface
      */
     public function checkOverlapDates($start_date, $end_date, $id = null)
     {
-        /** 
+        /**
          * Two time periods P1 and P2 overlaps if, and only if, at least one of these conditions hold:
          * P1 starts between the start and end of P2 (P2.from <= P1.from <= P2.to)
          * P2 starts between the start and end of P1 (P1.from <= P2.from <= P1.to)
@@ -92,7 +92,7 @@ final class BillingPeriodRepository implements BillingPeriodRepositoryInterface
             })
             ->where(function($query) use ($start_date, $end_date) {
                 $query->orWhere(function($query) use ($start_date, $end_date) {
-                    
+
                     $query->where('start_date', '<=', $start_date)
                     ->where('end_date', '>=', $start_date);
                 });
@@ -111,7 +111,7 @@ final class BillingPeriodRepository implements BillingPeriodRepositoryInterface
      *
      * @return \Illuminate\Http\Response
      */
-    public function getCurrentBillingPeriod() 
+    public function getCurrentBillingPeriod()
     {
         $current_date = date('Y-m-d');
 
@@ -130,13 +130,13 @@ final class BillingPeriodRepository implements BillingPeriodRepositoryInterface
     public function loadBillingPeriods($filter) {
         return $this->model
             ->select('id', 'name', 'start_date', 'end_date')
-            ->where('name', 'ilike', "%$filter%")
+            ->where('name', 'like', "%$filter%")
             ->orderBy('start_date', 'DESC')
             ->get();
     }
 
-    public function getAmountBilledByPeriod($social_work_id, $start_date, $end_date) 
-    {   
+    public function getAmountBilledByPeriod($social_work_id, $start_date, $end_date)
+    {
         $collected_periods = DB::table('internal_protocols')
             ->select('internal_protocols.billing_period_id')
             ->selectRaw('SUM(internal_protocols.total_price) as total_collection')
@@ -170,7 +170,7 @@ final class BillingPeriodRepository implements BillingPeriodRepositoryInterface
     /*
     * Returns a list with the collection of a social work in the specified billing periods
     */
-    public function getCollectionSocialWork($social_work_id, $start_date, $end_date) 
+    public function getCollectionSocialWork($social_work_id, $start_date, $end_date)
     {
         $collected_periods = DB::table('internal_protocols')
             ->select('internal_protocols.billing_period_id')
@@ -206,7 +206,7 @@ final class BillingPeriodRepository implements BillingPeriodRepositoryInterface
     /*
     * Returns a list with the flow of patients in the specified billing periods
     */
-    public function getPatientFlow($start_date, $end_date) 
+    public function getPatientFlow($start_date, $end_date)
     {
         $total_patients = DB::table('internal_protocols')
             ->select('internal_protocols.billing_period_id')
@@ -229,7 +229,7 @@ final class BillingPeriodRepository implements BillingPeriodRepositoryInterface
     /*
     * Returns a list of the lab's revenue for the specified billing periods
     */
-    public function getTrackIncome($start_date, $end_date) 
+    public function getTrackIncome($start_date, $end_date)
     {
         $total_income = DB::table('internal_protocols')
             ->select('internal_protocols.billing_period_id')
