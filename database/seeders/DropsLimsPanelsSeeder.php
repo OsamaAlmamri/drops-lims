@@ -126,30 +126,31 @@ class DropsLimsPanelsSeeder extends Seeder
             return $m;
         };
 
-        // JS تنبيه للأرقام خارج المدى (لو وجد مدى a-b)
+        // JS تنبيه للأرقام خارج المدى (لو وجد مدى a-b) — بدون <script> وبإغلاق صحيح
         $buildJS = function (array $rows) {
             $rules = [];
             foreach ($rows as $r) {
                 if (($r['type'] ?? 'number') !== 'number') continue;
-                if (!isset($r['range'])) continue;
+                if (empty($r['range'])) continue;
                 if (preg_match('/([0-9]+\\.?[0-9]*)\\s*[-–]\\s*([0-9]+\\.?[0-9]*)/u', $r['range'], $m)) {
                     $id = $r['id']; $min = $m[1]; $max = $m[2];
-                    $rules[] = "bindChk('{$id}', {$min}, {$max});";
+                    $rules[] = "  bindChk('{$id}', {$min}, {$max});";
                 }
             }
-            $rulesJs = implode("\n    ", $rules);
+            $rulesJs = implode("\n", $rules);
             return <<<JS
-$(function(){
-  function bindChk(id, min, max){
-    var \$el = \$("[name='"+id+"']");
-    function chk(){
+$(function () {
+  function bindChk(id, min, max) {
+    var \$el = \$("[name='" + id + "']");
+    function chk() {
       var v = parseFloat(\$el.val());
-      if (!isNaN(v) && (v < min || v > max)) { \$el.css('background','#ffe6e6'); }
-      else { \$el.css('background',''); }
+      if (!isNaN(v) && (v < min || v > max)) { \$el.css('background', '#ffe6e6'); }
+      else { \$el.css('background', ''); }
     }
-    \$el.on('input change', chk); chk();
+    \$el.on('input change', chk);
+    chk();
   }
-  {$rulesJs}
+{$rulesJs}
 });
 JS;
         };
@@ -158,15 +159,15 @@ JS;
 
         // 1) Urine Analysis (Panel)
         $urineWorksheet = <<<HTML
-<div style="direction:rtl; font-family:'DejaVu Sans',sans-serif;">
+<div style="direction:ltr; font-family:'DejaVu Sans',sans-serif;">
   <h4>Urine Analysis</h4>
   <strong>Macroscopic Examination</strong>
   <table class="table" style="width:100%; border-collapse:collapse;">
     <thead><tr>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">اسم الفحص</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">النتيجة</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">الوحدة</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">المدى الطبيعي</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;"> Test Name</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
       {$rowsToWorksheet($urineMacro)}
@@ -176,10 +177,10 @@ JS;
   <strong>Microscopic Examination</strong>
   <table class="table" style="width:100%; border-collapse:collapse;">
     <thead><tr>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">اسم الفحص</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">النتيجة</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">الوحدة</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">المدى الطبيعي</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;"> Test Name</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
       {$rowsToWorksheet($urineMicro)}
@@ -189,15 +190,15 @@ JS;
 HTML;
 
         $urineTemplate = <<<HTML
-<div style="direction:rtl; font-family:'DejaVu Sans',sans-serif;">
+<div style="direction:ltr; font-family:'DejaVu Sans',sans-serif;">
   <h4>Urine Analysis</h4>
   <strong>Macroscopic Examination</strong>
   <table style="width:100%; border-collapse:collapse;">
     <thead><tr>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Test Name</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Unit</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Normal Range</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
       {$rowsToTemplate($urineMacro)}
@@ -207,10 +208,10 @@ HTML;
   <strong>Microscopic Examination</strong>
   <table style="width:100%; border-collapse:collapse;">
     <thead><tr>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Test Name</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Unit</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Normal Range</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
       {$rowsToTemplate($urineMicro)}
@@ -221,14 +222,14 @@ HTML;
 
         // 2) CBC
         $cbcWorksheet = <<<HTML
-<div style="direction:rtl; font-family:'DejaVu Sans',sans-serif;">
+<div style="direction:ltr; font-family:'DejaVu Sans',sans-serif;">
   <h4>Haematology</h4>
   <table class="table" style="width:100%; border-collapse:collapse;">
     <thead><tr>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Test Name</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Unit</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Normal Range</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
       {$rowsToWorksheet($cbc)}
@@ -238,14 +239,14 @@ HTML;
 HTML;
 
         $cbcTemplate = <<<HTML
-<div style="direction:rtl; font-family:'DejaVu Sans',sans-serif;">
+<div style="direction:ltr; font-family:'DejaVu Sans',sans-serif;">
   <h4>Haematology</h4>
   <table style="width:100%; border-collapse:collapse;">
     <thead><tr>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Test Name</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Unit</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Normal Range</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
       {$rowsToTemplate($cbc)}
@@ -256,14 +257,14 @@ HTML;
 
         // 3) Biochemistry
         $bioWorksheet = <<<HTML
-<div style="direction:rtl; font-family:'DejaVu Sans',sans-serif;">
+<div style="direction:ltr; font-family:'DejaVu Sans',sans-serif;">
   <h4>Biochemistry</h4>
   <table class="table" style="width:100%; border-collapse:collapse;">
     <thead><tr>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Test Name</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Unit</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Normal Range</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
       {$rowsToWorksheet($bio)}
@@ -273,14 +274,14 @@ HTML;
 HTML;
 
         $bioTemplate = <<<HTML
-<div style="direction:rtl; font-family:'DejaVu Sans',sans-serif;">
+<div style="direction:ltr; font-family:'DejaVu Sans',sans-serif;">
   <h4>Biochemistry</h4>
   <table style="width:100%; border-collapse:collapse;">
     <thead><tr>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Test Name</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Unit</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Normal Range</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
       {$rowsToTemplate($bio)}
@@ -291,14 +292,14 @@ HTML;
 
         // 4) Coagulation
         $coagWorksheet = <<<HTML
-<div style="direction:rtl; font-family:'DejaVu Sans',sans-serif;">
+<div style="direction:ltr; font-family:'DejaVu Sans',sans-serif;">
   <h4>Coagulation</h4>
   <table class="table" style="width:100%; border-collapse:collapse;">
     <thead><tr>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Test Name</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Unit</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Normal Range</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
       {$rowsToWorksheet($coag)}
@@ -308,14 +309,14 @@ HTML;
 HTML;
 
         $coagTemplate = <<<HTML
-<div style="direction:rtl; font-family:'DejaVu Sans',sans-serif;">
+<div style="direction:ltr; font-family:'DejaVu Sans',sans-serif;">
   <h4>Coagulation</h4>
   <table style="width:100%; border-collapse:collapse;">
     <thead><tr>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Test Name</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Unit</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Normal Range</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
       {$rowsToTemplate($coag)}
@@ -326,14 +327,14 @@ HTML;
 
         // 5) Serology – Troponin I
         $seroWorksheet = <<<HTML
-<div style="direction:rtl; font-family:'DejaVu Sans',sans-serif;">
+<div style="direction:ltr; font-family:'DejaVu Sans',sans-serif;">
   <h4>Serology</h4>
   <table class="table" style="width:100%; border-collapse:collapse;">
     <thead><tr>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Test Name</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Unit</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Normal Range</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
       {$rowsToWorksheet($sero)}
@@ -343,14 +344,14 @@ HTML;
 HTML;
 
         $seroTemplate = <<<HTML
-<div style="direction:rtl; font-family:'DejaVu Sans',sans-serif;">
+<div style="direction:ltr; font-family:'DejaVu Sans',sans-serif;">
   <h4>Serology</h4>
   <table style="width:100%; border-collapse:collapse;">
     <thead><tr>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Test Name</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Unit</th>
-      <th style="text-align:right;border-bottom:1px solid #ccc;">Normal Range</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+      <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
       {$rowsToTemplate($sero)}
@@ -407,18 +408,22 @@ HTML;
         DB::beginTransaction();
         try {
             foreach ($panels as $p) {
+
+                // تنظيف أي وسوم <script> لو وُجدت بالخطأ
+                $jsClean = preg_replace('/<\\/?script[^>]*>/i', '', $p['js']);
+
                 DB::table('determinations')->updateOrInsert(
                     ['nomenclator_id'=>$NOMENCLATOR_ID, 'code'=>(int)$p['code']],
                     [
-                        'name'             => $p['name'],
-                        'position'         => (int)$p['position'],
-                        'biochemical_unit' => 1.00,
-                        'template'         => $p['template'],
-                        'worksheet_template'=> $p['worksheet'],
-                        'template_variables'=> json_encode($p['vars'], JSON_UNESCAPED_UNICODE),
-                        'javascript'       => $p['js'],
-                        'created_at'       => $now,
-                        'updated_at'       => $now,
+                        'name'               => $p['name'],
+                        'position'           => (int)$p['position'],
+                        'biochemical_unit'   => 1.00,
+                        'template'           => $p['template'],
+                        'worksheet_template' => $p['worksheet'],
+                        'template_variables' => json_encode($p['vars'], JSON_UNESCAPED_UNICODE),
+                        'javascript'         => $jsClean, // ← سكربت نظيف بدون <script>
+                        'created_at'         => $now,
+                        'updated_at'         => $now,
                     ]
                 );
             }

@@ -25,7 +25,7 @@ class CreateDeterminationsTable extends Migration
             $table->text('template', )->nullable();
             $table->json('template_variables')->nullable();
 
-            $table->string('worksheet_template')->nullable();
+            $table->text('worksheet_template')->nullable();
 
             // Foreign keys
             $table->foreign('nomenclator_id')->references('id')->on('nomenclators')->onDelete('cascade')->onUpdate('cascade');

@@ -75,7 +75,7 @@
     {{-- كود الجافاسكربت الخاص بالـ Determination (مغلّف داخل <script>) --}}
     @if ($practice->determination->javascript)
         <script>
-{{--            {!! $practice->determination->javascript !!}--}}
+            {!! $practice->determination->javascript !!}
         </script>
     @endif
 @endsection
