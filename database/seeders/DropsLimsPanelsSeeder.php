@@ -102,7 +102,7 @@ class DropsLimsPanelsSeeder extends Seeder
                 $unit  = htmlspecialchars($r['unit']  ?? '', ENT_QUOTES, 'UTF-8');
                 $range = htmlspecialchars($r['range'] ?? '', ENT_QUOTES, 'UTF-8');
                 $el    = $inputEl($r);
-                $trs  .= "<tr><td>{$label}</td><td>{$el}</td><td>{$unit}</td><td>{$range}</td></tr>";
+                $trs  .= "<tr><td>{$label}</td><td>{$el}</td><td>{$range} {$unit}</td></tr>";
             }
             return $trs;
         };
@@ -115,7 +115,7 @@ class DropsLimsPanelsSeeder extends Seeder
                 $range = htmlspecialchars($r['range'] ?? '', ENT_QUOTES, 'UTF-8');
                 $var   = '${'.$r['id'].'}';
                 $unitShow = ($unit === '') ? '&mdash;' : $unit;
-                $trs  .= "<tr><td>{$label}</td><td>{$var}</td><td>{$unitShow}</td><td>{$range}</td></tr>";
+                $trs  .= "<tr><td>{$label}</td><td>{$var}</td><td>{$range} {$unitShow}</td></tr>";
             }
             return $trs;
         };
@@ -166,7 +166,7 @@ JS;
     <thead><tr>
       <th style="text-align:left;border-bottom:1px solid #ccc;"> Test Name</th>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+
       <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
@@ -179,7 +179,7 @@ JS;
     <thead><tr>
       <th style="text-align:left;border-bottom:1px solid #ccc;"> Test Name</th>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+
       <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
@@ -197,7 +197,7 @@ HTML;
     <thead><tr>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+
       <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
@@ -210,7 +210,7 @@ HTML;
     <thead><tr>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+
       <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
@@ -228,7 +228,7 @@ HTML;
     <thead><tr>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+
       <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
@@ -245,7 +245,7 @@ HTML;
     <thead><tr>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+
       <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
@@ -263,7 +263,7 @@ HTML;
     <thead><tr>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+
       <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
@@ -280,7 +280,7 @@ HTML;
     <thead><tr>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+
       <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
@@ -298,7 +298,7 @@ HTML;
     <thead><tr>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+
       <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
@@ -315,7 +315,7 @@ HTML;
     <thead><tr>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+
       <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
@@ -333,7 +333,7 @@ HTML;
     <thead><tr>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+
       <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>
@@ -350,7 +350,7 @@ HTML;
     <thead><tr>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Test Name</th>
       <th style="text-align:left;border-bottom:1px solid #ccc;">Result</th>
-      <th style="text-align:left;border-bottom:1px solid #ccc;">Unit</th>
+
       <th style="text-align:left;border-bottom:1px solid #ccc;">Normal Range</th>
     </tr></thead>
     <tbody>

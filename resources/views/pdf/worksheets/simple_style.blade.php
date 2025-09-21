@@ -112,7 +112,7 @@
 @section('content')
     @foreach ($protocol->internalPractices as $practice)
             <div class="page-break-inside">
-                {!! $practice->determination->worksheet_template !!} <br />
+                {!! $practice->result_template !!} <br />
                 ============================================ <br />
             </div>
     @endforeach
