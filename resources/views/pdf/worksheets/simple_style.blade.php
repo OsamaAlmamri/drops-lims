@@ -39,6 +39,20 @@
         .sub td    { text-align:left; }
 
         .lab-title { text-align:right; font-weight:bold; font-size:20px; margin-bottom:6px; }
+
+
+        .page-break-after {
+            page-break-after: always;
+        }
+
+        .page-break-before {
+            page-break-before: always;
+        }
+
+        .page-break-inside {
+            page-break-inside: avoid;
+        }
+    </style>
     </style>
 @endsection
 
