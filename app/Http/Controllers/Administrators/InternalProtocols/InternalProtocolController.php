@@ -246,6 +246,10 @@ class InternalProtocolController extends Controller
 //
 //        return $pdf->stream('worksheet_'.$protocol->id.'.pdf');
 
+//       return view('pdf.worksheets.simple_style',)->with([
+//            'protocol' => $protocol,
+//        ]);
+
         $html = view('pdf.worksheets.simple_style',)->with([
             'protocol' => $protocol,
         ])->render();

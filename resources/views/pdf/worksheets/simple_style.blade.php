@@ -3,128 +3,115 @@
 @section('title')
     {{ trans('protocols.worksheet_for_protocol') }} #{{ $protocol->id }}
 @endsection
-
 @section('style')
     <style>
-        body {
-            margin-top: 120px; /* Adjust this value based on your header height */
-        }
-        header {
+        /* dompdf: reserve space for header via @page (not body margin) */
+        @page { margin: 170px 20px 50px 20px; }
+
+        /*body { font-family: "DejaVu Sans", sans-serif; }*/
+
+        /* fixed header sits in the negative top offset ~= header height */
+        header.lab-header{
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 120px; /* Adjust this value based on your header height */
-            text-align: center;
-            line-height: 16px; /* Adjust based on your header content */
-            z-index: 1000; /* Ensure header is on top */
+            top: -160px;              /* ≈ header height */
+            left: 0; right: 0;
+            height: 160px;
+        }
+        /*.header.lab-header { top: -120px; height: 120px; }*/
+
+        /* layout tables */
+        .hdr   { width:100%; border-collapse:collapse; }
+        .hdr td{ vertical-align:top; }
+
+        /* BOX: use <td> border (more reliable in dompdf than div borders) */
+        .boxcell{
+            border:1px solid #000;      /* the visible box */
+            padding:6px;
         }
 
-    </style>
+        /* inner detail table */
+        .sub       { width:100%; border-collapse:collapse; table-layout:fixed; }
+        .sub th,
+        .sub td    { padding:4px 6px; font-size:12px; line-height:1.2; border-top:1px solid #cfcfcf;
+            white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .sub tr:first-child th, .sub tr:first-child td { border-top:none; }
+        .sub th    { width:120px; text-align:left; font-weight:bold; }
+        .sub td    { text-align:left; }
 
-    <style>
-        #first_column {
-            position: absolute;
-            top: 1%;
-            width: 100px;
-        }
-
-        #second_column {
-            margin-left: 17%;
-        }
-
-        .info {
-            margin-bottom: 2%;
-        }
-
-        .info td {
-            width: 100mm;
-        }
-
-        .page-break-after {
-            page-break-after: always;
-        }
-
-        .page-break-before {
-            page-break-before: always;
-        }
-
-        .page-break-inside {
-            page-break-inside: avoid;
-        }
+        .lab-title { text-align:right; font-weight:bold; font-size:20px; margin-bottom:6px; }
     </style>
 @endsection
 
 @section('header')
-    <table class="info">
-        <tr>
-            <td> {{ trans('patients.patient') }}: {{ $protocol->internalPatient->full_name }} </td>
-            <td> {{ trans('protocols.protocol_number') }}: #{{ $protocol->id }} </td>
-        </tr>
+    @php
+        $p   = $protocol->internalPatient;
+        $doc = optional($protocol->prescriber)->full_name;
+        $fileNo = $p->identification_number ?? $p->id;
 
-        <tr>
-            <td> {{trans('patients.identification_number') }}: {{ $protocol->internalPatient->identification_number }} </td>
+        $when = \Carbon\Carbon::parse($protocol->completion_date ?? now());
+        $date = $when->format('d/m/Y');
+        $time = $when->format('h:i A');
 
-            <td> {{ trans('protocols.completion_date') }}: {{ \Carbon\Carbon::parse($protocol->completion_date)->format(Drops::getSystemParameterValueByKey('DATE_FORMAT')) }} </td>
-        </tr>
+        $sex = match ($p->sex ?? null) {
+            'M' => trans('patients.male'),
+            'F' => trans('patients.female'),
+            default => trans('patients.undefined'),
+        };
 
-        <tr>
-            <td> {{ trans('patients.home_address') }}: {{ $protocol->internalPatient->address }} </td>
+        $ageArr = method_exists($p,'age') ? $p->age() : null;
+        $ageStr = '';
+        if ($ageArr) {
+            $y = (int)($ageArr['year']??0);
+            $m = (int)($ageArr['month']??0);
+            $d = (int)($ageArr['day']??0);
+            $ageStr = $y>0 ? $y.' '.__('patients.years') : ($m>0 ? $m.' '.__('patients.months') : $d.' '.__('patients.days'));
+        }
 
-            <td>
-                @php
-                    $age = $protocol->internalPatient->age();
-                    $format_type = $age != null && $age['year'] > 0;
-                @endphp
+        $ward = $protocol->ward ?? '—';
+        $room = $protocol->room ?? '—';
+    @endphp
 
-                {{ trans('patients.age') }}: @if ($age != null) {{ trans_choice('patients.calculate_age', $format_type ? 1 : 0 , $protocol->internalPatient->age()) }} @endif
-            </td>
-         </tr>
+    <header class="lab-header">
+        <div class="lab-title">قسم المختبر</div>
 
-        <tr>
-            <td> {{ trans('prescribers.prescriber') }}: {{ $protocol->prescriber->full_name }} </td>
-            <td>
+        <table class="hdr">
+            <tr>
+                <!-- LEFT BOX -->
+                <td style="width:58%; padding-right:8px;">
+                    <table class="sub">
+                        <tr>
+                            <td class="boxcell">
+                                <table class="sub">
+                                    <tr><th>Lab No</th>       <td>{{ str_pad($protocol->id, 4, '0', STR_PAD_LEFT) }}</td></tr>
+                                    <tr><th>File No</th>      <td>{{ $fileNo }}</td></tr>
+                                    <tr><th>Patient Name</th> <td>{{ $p->full_name }}</td></tr>
+                                    <tr><th>Doctor Name</th>  <td>{{ $doc }}</td></tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
 
-                {{ trans('patients.sex') }}:
-                @switch ($protocol->internalPatient->sex)
-                    @case('M')
-                        {{ trans('patients.male') }}
-                        @break
-
-                    @case('F')
-                        {{ trans('patients.female') }}
-                        @break
-
-                    @default
-                        {{ trans('patients.undefined') }}
-                        @break
-                @endswitch
-            </td>
-        </tr>
-
-        <tr>
-            <td> {{ trans('social_works.social_work') }}: {{ $protocol->plan->social_work->name }} </td>
-            <td> {{ trans('patients.phone') }}: {{ $protocol->internalPatient->phone }} </td>
-        </tr>
-    </table>
-
-    <table class="info">
-        <tr>
-            <td>
-            @if (!empty($protocol->diagnostic))
-                <div style="margin-bottom: 2%">
-                    {{ trans('protocols.diagnostic') }}: {{ $protocol->diagnostic }}
-                </div>
-            @endif
-            </td>
-
-            <td>
-                {!! DNS1D::getBarcodeHTML(str_pad($protocol->id, 12, "0", STR_PAD_LEFT), 'EAN13', 3, 50, 'black', 12) !!}
-            </td>
-        </tr>
-    </table>
-
+                <!-- RIGHT BOX -->
+                <td style="width:42%; padding-left:8px;">
+                    <table class="sub">
+                        <tr>
+                            <td class="boxcell">
+                                <table class="sub">
+                                    <tr><th>Date</th><td>{{ $date }} &nbsp; {{ $time }}</td></tr>
+                                    <tr><th>Sex</th> <td>{{ $sex }}</td></tr>
+                                    <tr><th>Age</th> <td>{{ $ageStr }}</td></tr>
+                                    <tr><th>Ward</th><td>{{ $ward }} &nbsp;&nbsp; <b>Room</b> {{ $room }}</td></tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </header>
 @endsection
+
 
 @section('content')
     @foreach ($protocol->internalPractices as $practice)
