@@ -6,6 +6,23 @@
 
 @section('style')
     <style>
+        body {
+            margin-top: 120px; /* Adjust this value based on your header height */
+        }
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 120px; /* Adjust this value based on your header height */
+            text-align: center;
+            line-height: 16px; /* Adjust based on your header content */
+            z-index: 1000; /* Ensure header is on top */
+        }
+
+    </style>
+
+    <style>
         #first_column {
             position: absolute;
             top: 1%;

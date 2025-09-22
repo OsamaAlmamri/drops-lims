@@ -38,7 +38,7 @@ class InternalProtocolController extends Controller
 
     public function __construct (
         InternalProtocolRepositoryInterface $internalProtocolRepository,
-        InternalPatientRepositoryInterface $internalPatientRepository, 
+        InternalPatientRepositoryInterface $internalPatientRepository,
         BillingPeriodRepositoryInterface $billingPeriodRepository
     ) {
         $this->internalProtocolRepository = $internalProtocolRepository;
@@ -60,7 +60,7 @@ class InternalProtocolController extends Controller
             'filter' => 'string|nullable',
             'page' => 'required|numeric|min:1',
         ]);
-        
+
         $protocols = $this->internalProtocolRepository->index($request->filter);
 
         // Pagination
@@ -68,12 +68,12 @@ class InternalProtocolController extends Controller
         $count_rows = $protocols->count();
         $total_pages = ceil($count_rows / self::PER_PAGE);
         $paginate = $this->paginate($page, $total_pages, self::ADJACENTS);
-        
-        if ($total_pages < $page) 
+
+        if ($total_pages < $page)
         {
             $offset = 0;
             $page = 1;
-        } else 
+        } else
         {
             $offset = ($page - 1) * self::PER_PAGE;
         }
@@ -96,7 +96,7 @@ class InternalProtocolController extends Controller
         //
 
         $patient = $this->internalPatientRepository->find($request->internal_patient_id);
-        
+
         $current_billing_period = $this->billingPeriodRepository->getCurrentBillingPeriod();
 
         return view('administrators.internal_protocols.create')
@@ -118,11 +118,11 @@ class InternalProtocolController extends Controller
             'completion_date' => 'required|date',
             'quantity_orders' => 'required|numeric|min:0',
         ]);
-        
+
         if (! $protocol = $this->internalProtocolRepository->create($request->all())) {
             return back()->withInput($request->all())->withErrors(Lang::get('forms.failed_transaction'));
         }
-        
+
         return redirect()->action([InternalProtocolController::class, 'edit'], ['id' => $protocol->id]);
     }
 
@@ -162,17 +162,17 @@ class InternalProtocolController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //  
-        
+        //
+
         $request->validate([
             'completion_date' => 'required|date',
             'quantity_orders' => 'required|numeric|min:0',
         ]);
-        
+
         if (! $this->internalProtocolRepository->update($request->all(), $id)) {
             return back()->withInput($request->all())->withErrors(Lang::get('forms.failed_transaction'));
         }
-        
+
         return redirect()->action([InternalProtocolController::class, 'edit'], ['id' => $id]);
     }
 
@@ -186,11 +186,11 @@ class InternalProtocolController extends Controller
     {
         //
 
-        if (! $this->internalProtocolRepository->delete($id)) 
+        if (! $this->internalProtocolRepository->delete($id))
         {
             return back()->withInput($request->all())->withErrors(Lang::get('forms.failed_transaction'));
         }
-        
+
         Session::flash('success', [Lang::get('protocols.success_destroy_message')]);
 
         return redirect()->action([InternalProtocolController::class, 'index'], ['page' => 1]);
@@ -213,7 +213,7 @@ class InternalProtocolController extends Controller
 
         $practices = $protocol->internalPractices;
 
-        if (! empty($request->filter_practices)) 
+        if (! empty($request->filter_practices))
         {
             $practices = $practices->whereIn('id', $request->filter_practices);
         }
@@ -224,10 +224,10 @@ class InternalProtocolController extends Controller
             'protocol' => $protocol,
             'practices' => $practices
         ]);
-        
+
         $protocol_path = storage_path(self::INTERNAL_PROTOCOLS_DIRECTORY."protocol_$protocol->id.pdf");
         $pdf->save($protocol_path);
-       
+
         return $pdf->stream("protocol_$protocol->id");
     }
 
@@ -240,12 +240,19 @@ class InternalProtocolController extends Controller
     {
         $protocol = $this->internalProtocolRepository->findOrFail($id);
 
-        $pdf = PDF::loadView('pdf.worksheets.simple_style', [
-            'protocol' => $protocol,
-        ]);
+//        $pdf = PDF::loadView('pdf.worksheets.simple_style', [
+//            'protocol' => $protocol,
+//        ]);
+//
+//        return $pdf->stream('worksheet_'.$protocol->id.'.pdf');
 
-        return $pdf->stream('worksheet_'.$protocol->id.'.pdf');
-    }
+        $html = view('pdf.worksheets.simple_style',)->with([
+            'protocol' => $protocol,
+        ])->render();
+
+//        $gpdf = app(Gpdf::class);
+    return    PDF::generateWithStream($html, 'test-streamed-pdf', true);
+   }
 
     /**
      * Close a protocol so that it is never modified
@@ -282,7 +289,7 @@ class InternalProtocolController extends Controller
 
         $practices = $protocol->internalPractices;
 
-        if (! empty($request->filter_practices)) 
+        if (! empty($request->filter_practices))
         {
             $practices = $practices->whereIn('id', $request->filter_practices);
         }

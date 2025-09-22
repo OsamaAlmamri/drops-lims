@@ -11,8 +11,9 @@
 </head>
 
 <body>
+<header>
 @section('header') @show
-
+</header>
 @section('content') @show
 
 @section('footer') @show
