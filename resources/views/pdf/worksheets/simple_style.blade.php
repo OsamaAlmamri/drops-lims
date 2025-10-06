@@ -8,8 +8,6 @@
         /* dompdf: reserve space for header via @page (not body margin) */
         @page { margin: 170px 20px 50px 20px; }
 
-        /*body { font-family: "DejaVu Sans", sans-serif; }*/
-
         /* fixed header sits in the negative top offset ~= header height */
         header.lab-header{
             position: fixed;
@@ -21,18 +19,17 @@
 
         /* layout tables */
         .hdr   { width:100%; border-collapse:collapse; }
-        .hdr td{ vertical-align:top; }
+        .hdr td{ vertical-align:bottom; }
 
         /* BOX: use <td> border (more reliable in dompdf than div borders) */
         .boxcell{
-            border:1px solid #000;      /* the visible box */
+            /*border:1px solid #000;      !* the visible box *!*/
             padding:6px;
         }
 
         /* inner detail table */
         .sub       { width:100%; border-collapse:collapse; table-layout:fixed; }
-        .sub th,
-        .sub td    { padding:4px 6px; font-size:12px; line-height:1.2; border-top:1px solid #cfcfcf;
+        tr, td    { padding:4px 6px; font-size:12px; line-height:1.2; border:1px solid #000;
             white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .sub tr:first-child th, .sub tr:first-child td { border-top:none; }
         .sub th    { width:120px; text-align:left; font-weight:bold; }
@@ -130,7 +127,11 @@
 @section('content')
     @foreach ($protocol->internalPractices as $practice)
             <div class="page-break-inside">
-                {!! $practice->result_template !!} <br />
+
+               <div style="margin-top: 32px">
+                   {!! $practice->result_template !!}
+               </div>
+                <br />
                 ============================================ <br />
             </div>
     @endforeach
